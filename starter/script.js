@@ -1,36 +1,51 @@
 'use strict';
-let score = 0;
+
+const player0 = document.querySelector('.player--0');
+const player1 = document.querySelector('.player--1');
+const score0 = document.querySelector('#score--0');
+const score1 = document.querySelector('#score--1');
+const currentScore0 = document.querySelector('#current--0');
+const currentScore1 = document.querySelector('#current--1');
+const btnRoll = document.querySelector('.btn--roll');
+const btnHold = document.querySelector('.btn--hold');
+const btnNew = document.querySelector('.btn--new');
+const img = document.querySelector('.dice');
+///////////////////////////////////////////////////////////////
+score0.textContent = 0;
+score1.textContent = 0;
+const scores = [0, 0];
 let points = 0;
-// const player1 = document.querySelector('.player--0');
-// const player2 = document.querySelector('.player--1');
+let activePlayer = 0;
+img.classList.add('hidden');
+////////////////////////////////////////////////////////////////
+
 const number = function () {
   return Math.floor(Math.random() * 6 + 1);
 };
-const currentPoints = function (points) {
-  document.querySelector('.current-score').textContent = points;
+const currentPoints = function (ap, points) {
+  document.querySelector(`#current--${ap}`).textContent = points;
 };
-const displayScore = function (thatScore) {
-  document.querySelector('.score').textContent = thatScore;
+const displayScore = function (ap, thatScore) {
+  document.querySelector(`#score--${ap}`).textContent = thatScore;
 };
 
-const image = function (num) {
-  const img = document.querySelector('.dice');
-  if (num) return (img.src = `dice-${num}.png`);
-};
-document.querySelector('.btn--roll').addEventListener('click', function () {
+btnRoll.addEventListener('click', function () {
   let diceRoll = number();
-  image(diceRoll);
-  if (diceRoll !== 1) points = diceRoll + points;
-  else points = 0;
-  currentPoints(points);
+  img.classList.remove('hidden');
+  img.src = img.src = `dice-${diceRoll}.png`;
+  if (diceRoll !== 1) {
+    points = diceRoll + points;
+    currentPoints(activePlayer, points);
+  } else {
+    currentPoints(activePlayer, 0);
+    activePlayer = activePlayer === 0 ? 1 : 0;
+    points = 0;
+  }
 });
-document.querySelector('.btn--hold').addEventListener('click', function () {
-  score = score + points;
+btnHold.addEventListener('click', function () {
+  scores[activePlayer] = scores[activePlayer] + points;
+  displayScore(activePlayer, scores[activePlayer]);
   points = 0;
-  currentPoints(points);
-  displayScore(score);
-  //   player1.classList.remove('player--active');
-  //   if (!player2.classList.contains('player--active')) {
-  // player2.classList.add('player--active');
-  //   }
+  currentPoints(activePlayer, points);
+  activePlayer = activePlayer === 0 ? 1 : 0;
 });
